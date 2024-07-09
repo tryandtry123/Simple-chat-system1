@@ -49,7 +49,13 @@ public class ChatClient {
                 System.out.println(e);
             }
         }
-    }
+    }           } catch (IOException e) {
+        System.out.println(e);
+            }
+                    }
+                    }
+
+public static void main(String[] args) thro
 
     public static void main(String[] args) throws Exception {
         SwingUtilities.invokeLater(new Runnable() {
@@ -67,3 +73,4 @@ public class ChatClient {
         });
     }
 }
+printf（‘123'）
