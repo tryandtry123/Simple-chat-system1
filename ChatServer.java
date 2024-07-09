@@ -5,6 +5,7 @@ import java.util.*;
 public class ChatServer {
     private static final int PORT = 12345;
     private static Set<PrintWriter> clientWriters = new HashSet<>();
+    private static Map<PrintWriter, String> clientNames = new HashMap<>(); // 存储客户端标识符
     private static File logFile = new File("chat_log.txt");
 
     public static void main(String[] args) throws Exception {
@@ -37,13 +38,20 @@ public class ChatServer {
                     clientWriters.add(out);
                 }
 
+                // 读取客户端标识符
+                String clientName = in.readLine();
+                synchronized (clientWriters) {
+                    clientWriters.add(out);
+                    clientNames.put(out, clientName);
+                }
                 String message;
+
                 while ((message = in.readLine()) != null) {
                     System.out.println("Received: " + message);
                     logMessage(message); // 保存消息到文件
                     synchronized (clientWriters) {
                         for (PrintWriter writer : clientWriters) {
-                            writer.println(message);
+                            writer.println(clientName + ": " + message); // 广播带有标识符的消息
                         }
                     }
                 }
@@ -56,6 +64,7 @@ public class ChatServer {
                 }
                 synchronized (clientWriters) {
                     clientWriters.remove(out);
+                    clientNames.remove(out);
                 }
             }
         }
