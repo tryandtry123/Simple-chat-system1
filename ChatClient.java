@@ -56,7 +56,7 @@ public class ChatClient {
             @Override
             public void run() {
                 try {
-                    ChatClient client = new ChatClient("localhost");
+                    ChatClient client = new ChatClient("10.210.174.79");
                     client.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
                     client.frame.setVisible(true);
                     client.textField.requestFocusInWindow(); // 确保文本字段获得焦点
