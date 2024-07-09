@@ -5,20 +5,21 @@ import java.util.*;
 public class ChatServer {
     private static final int PORT = 12345;
     private static Set<PrintWriter> clientWriters = new HashSet<>();
+    private static File logFile = new File("chat_log.txt");
 
     public static void main(String[] args) throws Exception {
         System.out.println("The chat server is running...");
         ServerSocket listener = new ServerSocket(PORT);
         try {
             while (true) {
-                new Handler(listener.accept()).start();
+                new Thread(new Handler(listener.accept())).start();
             }
         } finally {
             listener.close();
         }
     }
 
-    private static class Handler extends Thread {
+    private static class Handler implements Runnable {
         private Socket socket;
         private PrintWriter out;
         private BufferedReader in;
@@ -26,6 +27,7 @@ public class ChatServer {
         public Handler(Socket socket) {
             this.socket = socket;
         }
+
         @Override
         public void run() {
             try {
@@ -38,6 +40,7 @@ public class ChatServer {
                 String message;
                 while ((message = in.readLine()) != null) {
                     System.out.println("Received: " + message);
+                    logMessage(message); // 保存消息到文件
                     synchronized (clientWriters) {
                         for (PrintWriter writer : clientWriters) {
                             writer.println(message);
@@ -54,6 +57,17 @@ public class ChatServer {
                 synchronized (clientWriters) {
                     clientWriters.remove(out);
                 }
+            }
+        }
+
+        // 保存消息到文件的方法
+        private void logMessage(String message) {
+            try (FileWriter fw = new FileWriter(logFile, true);
+                 BufferedWriter bw = new BufferedWriter(fw);
+                 PrintWriter pw = new PrintWriter(bw)) {
+                pw.println(message);
+            } catch (IOException e) {
+                System.out.println("Error writing to log file: " + e);
             }
         }
     }

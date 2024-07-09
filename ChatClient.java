@@ -13,14 +13,13 @@ public class ChatClient {
 
     public ChatClient(String serverAddress) throws IOException {
         // 设置窗口组件
-        textField.setEditable(false);
-        messageArea.setEditable(false);
+        textField.setEditable(true); // 确保文本字段是可编辑的
+        messageArea.setEditable(false); // 确保消息区域不可编辑
         frame.getContentPane().add(textField, BorderLayout.SOUTH);
         frame.getContentPane().add(new JScrollPane(messageArea), BorderLayout.CENTER);
         frame.pack();
 
         // 添加文本框的事件监听
-
         textField.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -53,9 +52,18 @@ public class ChatClient {
     }
 
     public static void main(String[] args) throws Exception {
-        ChatClient client = new ChatClient("localhost");
-        client.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        client.frame.setVisible(true);
-        client.textField.setEditable(true);
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    ChatClient client = new ChatClient("localhost");
+                    client.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                    client.frame.setVisible(true);
+                    client.textField.requestFocusInWindow(); // 确保文本字段获得焦点
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 }
