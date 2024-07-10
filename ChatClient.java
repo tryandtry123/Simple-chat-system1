@@ -92,9 +92,7 @@ public class ChatClient {
             try {
                 String message;
                 while ((message = in.readLine()) != null) {
-                    // 获取当前时间并格式化 - 添加的代码
-                    String timeStamp = new SimpleDateFormat("HH:mm:ss").format(new Date());
-                    messageArea.append(timeStamp + " - " + message + "\n"); // 添加时间戳
+                    messageArea.append(message + "\n"); // 直接显示从服务器接收到的消息
                 }
             } catch (IOException e) {
                 System.out.println("Error reading message from server.");
