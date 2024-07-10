@@ -15,6 +15,9 @@ public class ChatClient {
     private JButton sendButton = new JButton("Send");
     private String clientName;
 
+    public JFrame getFrame() {
+        return frame;
+    }
     public ChatClient(String serverAddress, String clientName) {
         this.clientName = clientName;
 
@@ -112,11 +115,24 @@ public class ChatClient {
                             JOptionPane.PLAIN_MESSAGE
                     );
                     if (clientName != null && !clientName.trim().isEmpty()) {
-                        ChatClient client = new ChatClient("192.168.1.106", clientName); // 使用正确的IP地址
-                        client.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+                        InetAddress inetAddress = InetAddress.getLocalHost();
+                        String ipAddress = inetAddress.getHostAddress();
+
+                        ChatClient client = new ChatClient(ipAddress, clientName);
+
+
+                        client.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // 使用正确的IP地址
+
                         client.frame.setVisible(true);
                         client.textField.requestFocusInWindow(); // 确保文本字段获得焦点
                     }
+                } catch (UnknownHostException e) {
+                    System.out.println("Unknown host when retrieving local IP address.");
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    System.out.println("I/O error when retrieving local IP address.");
+                    e.printStackTrace();
                 } catch (Exception e) {
                     System.out.println("Error initializing the chat client.");
                     e.printStackTrace();
